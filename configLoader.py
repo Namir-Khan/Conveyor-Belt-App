@@ -6,10 +6,9 @@ class ConfigLoader:
         self.config = configparser.ConfigParser()
         self.config.read(config_path)
 
-    def get_camera_ips(self):
+    def get_camera_ip(self):
         return [
-            self.config.get("CAMERAS", "camera1"),
-            self.config.get("CAMERAS", "camera2")
+            self.config.get("CAMERAS", "camera1")
         ]
 
     def get_serial_port(self):

@@ -3,22 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conveyor</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Detection Dashboard</title>
     <script>
-        function fetchPrediction() {
-            fetch('/prediction')
-                .then(response => response.json())
+        let intervalId = null;
+
+        function updateStatus() {
+            fetch('/latest')
+                .then(res => res.json())
                 .then(data => {
-                    document.getElementById("status").innerText = data.prediction;
+                    document.getElementById("prediction").innerText = data.prediction;
                 });
         }
 
-        setInterval(fetchPrediction, 4000);
+        function detectOnce() {
+            fetch('/detect_once')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("prediction").innerText = data.prediction;
+                });
+        }
+
+        function startCycle() {
+            fetch('/start_detection')
+                .then(() => {
+                    intervalId = setInterval(updateStatus, 2000);
+                });
+        }
+
+        function stopCycle() {
+            fetch('/stop_detection')
+                .then(() => {
+                    clearInterval(intervalId);
+                });
+        }
     </script>
 </head>
 <body>
-    <h1>Welcome to the Conveyor App</h1>
-    <p>Status: <span id="status">Loading...</span></p>
+    <h1>Detection Control Panel</h1>
+    <button onclick="detectOnce()">Detect Once</button>
+    <button onclick="startCycle()">Start Cycle</button>
+    <button onclick="stopCycle()">Stop Cycle</button>
+    <p>Prediction: <span id="prediction">--</span></p>
 </body>
 </html>
